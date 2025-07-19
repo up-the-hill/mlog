@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"flag"
 	"fmt"
 	"os"
 	"time"
@@ -10,19 +10,11 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-const BASE_PATH = "/tmp/"
+const musingPath = "/tmp/musings.ndjson"
 
 type musing struct {
-	Musing string
-	Date   time.Time
-}
-
-func appendEntry(filename string, newEntry any) {
-	f, _ := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	defer f.Close()
-
-	entryJson, _ := json.Marshal(newEntry)
-	f.Write(append(entryJson, '\n'))
+	Musing string    `json:"musing"`
+	Date   time.Time `json:"date"`
 }
 
 type model struct {
@@ -32,7 +24,7 @@ type model struct {
 func initialModel() model {
 	ti := textinput.New()
 	ti.Focus()
-	ti.CharLimit = 156
+	ti.CharLimit = 128
 	ti.Width = 20
 	return model{
 		textinput: ti,
@@ -52,7 +44,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "enter":
-			appendEntry(BASE_PATH+"musings.ndjson", &musing{
+			appendEntry(musingPath, &musing{
 				Musing: m.textinput.Value(),
 				Date:   time.Now(),
 			},
@@ -78,9 +70,17 @@ func (m model) View() string {
 }
 
 func main() {
-	p := tea.NewProgram(initialModel())
-	if _, err := p.Run(); err != nil {
-		fmt.Printf("Alas, there's been an error: %v", err)
-		os.Exit(1)
+	listPtr := flag.Bool("l", false, "list all musings")
+	flag.Parse()
+	if *listPtr {
+		for _, m := range getEntries(musingPath) {
+			println(m.Musing)
+		}
+	} else {
+		p := tea.NewProgram(initialModel())
+		if _, err := p.Run(); err != nil {
+			fmt.Printf("Alas, there's been an error: %v", err)
+			os.Exit(1)
+		}
 	}
 }
