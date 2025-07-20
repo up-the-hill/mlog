@@ -17,6 +17,7 @@ func main() {
 	}
 	musingPath := config.MusingsFile
 
+	addPtr := flag.String("a", "", "add a new musing")
 	listPtr := flag.Bool("l", false, "list all musings")
 	exportPtr := flag.Bool("x", false, "export all musings to markdown")
 	flag.Parse()
@@ -28,6 +29,9 @@ func main() {
 		}
 	} else if *exportPtr {
 		exportMusings(musingPath)
+	} else if *addPtr != "" {
+		appendEntry(musingPath, *addPtr)
+		fmt.Printf("Logged \"%s\"\n", *addPtr)
 	} else {
 		// run without any flags
 		p := tea.NewProgram(initialModel(musingPath))

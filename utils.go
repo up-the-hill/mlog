@@ -6,9 +6,15 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
-func appendEntry(filename string, newEntry any) {
+func appendEntry(filename string, m string) {
+	newEntry := &musing{
+		Musing: m,
+		Date:   time.Now(),
+	}
+
 	if err := os.MkdirAll(filepath.Dir(filename), 0755); err != nil {
 		panic(err)
 	}

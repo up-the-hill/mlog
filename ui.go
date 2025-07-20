@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -35,11 +34,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "enter":
-			appendEntry(m.musingsPath, &musing{
-				Musing: m.textinput.Value(),
-				Date:   time.Now(),
-			},
-			)
+			appendEntry(m.musingsPath, m.textinput.Value())
 			m.exiting = true
 			return m, nil
 		}
