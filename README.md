@@ -1,4 +1,9 @@
 # mlog
 
-A simple cli tool to log media and ideas. Built with the idea of having a
-locally available, single tool to log movies, books, tweet-style posts, etc.
+A simple cli tool to log atomic thoughts.
+
+## Features
+
+- A 128 character limit.
+- Timestamped logs.
+- Markdown export.
