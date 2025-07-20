@@ -3,15 +3,19 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
 func appendEntry(filename string, newEntry any) {
-	f, _ := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	defer f.Close()
+	if err := os.MkdirAll(filepath.Dir(filename), 0755); err != nil {
+		panic(err);
+	}
+	f, _ := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644);
+	defer f.Close();
 
-	entryJson, _ := json.Marshal(newEntry)
-	f.Write(append(entryJson, "\n"...))
+	entryJson, _ := json.Marshal(newEntry);
+	f.Write(append(entryJson, "\n"...));
 }
 
 func getEntries(filename string) []musing {

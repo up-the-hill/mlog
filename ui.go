@@ -8,13 +8,14 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func initialModel() model {
+func initialModel(musingsPath string) model {
 	ti := textinput.New()
 	ti.Focus()
 	ti.CharLimit = 128
 	ti.Width = 20
 	return model{
-		textinput: ti,
+		textinput:   ti,
+		musingsPath: musingsPath,
 	}
 }
 
@@ -34,7 +35,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "enter":
-			appendEntry(musingPath, &musing{
+			appendEntry(m.musingsPath, &musing{
 				Musing: m.textinput.Value(),
 				Date:   time.Now(),
 			},

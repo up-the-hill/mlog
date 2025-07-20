@@ -12,6 +12,7 @@ type musing struct {
 }
 
 type model struct {
-	textinput textinput.Model
-	exiting   bool
+	textinput   textinput.Model
+	exiting     bool
+	musingsPath string
 }
