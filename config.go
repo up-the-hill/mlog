@@ -9,6 +9,8 @@ import (
 
 type Config struct {
 	MusingsFile string `toml:"musings_file"`
+	CharLimit   int    `toml:"char_limit"`
+	ExportPath  string `toml:"export_path"`
 }
 
 func loadConfig() (Config, error) {
@@ -24,6 +26,8 @@ func loadConfig() (Config, error) {
 		// Create a default config if it doesn't exist
 		homeDir, _ := os.UserHomeDir()
 		config.MusingsFile = filepath.Join(homeDir, "mlog", "musings.ndjson")
+		config.CharLimit = 128
+		config.ExportPath = filepath.Join(homeDir, "mlog", "musings.md")
 		if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
 			return config, err
 		}

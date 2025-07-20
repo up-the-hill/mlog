@@ -47,9 +47,12 @@ func getEntries(filename string) []musing {
 	return entries
 }
 
-func exportMusings(musingPath string) {
+func exportMusings(musingPath, exportPath string) {
 	musings := getEntries(musingPath)
-	exportPath := filepath.Join(filepath.Dir(musingPath), "musings.md")
+	if err := os.MkdirAll(filepath.Dir(exportPath), 0755); err != nil {
+		panic(err)
+	}
+	
 	f, err := os.Create(exportPath)
 	if err != nil {
 		panic(err)

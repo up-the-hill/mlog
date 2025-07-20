@@ -7,10 +7,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func initialModel(musingsPath string) model {
+func initialModel(musingsPath string, charLimit int) model {
 	ti := textinput.New()
 	ti.Focus()
-	ti.CharLimit = 128
+	ti.CharLimit = charLimit
 	ti.Width = 20
 	return model{
 		textinput:   ti,

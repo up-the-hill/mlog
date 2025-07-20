@@ -28,13 +28,13 @@ func main() {
 			fmt.Printf("%s %s\n", dateStyle.Render(m.Date.Format("2006-01-02")), m.Musing)
 		}
 	} else if *exportPtr {
-		exportMusings(musingPath)
+		exportMusings(musingPath, config.ExportPath)
 	} else if *addPtr != "" {
 		appendEntry(musingPath, *addPtr)
 		fmt.Printf("Logged \"%s\"\n", *addPtr)
 	} else {
 		// run without any flags
-		p := tea.NewProgram(initialModel(musingPath))
+		p := tea.NewProgram(initialModel(musingPath, config.CharLimit))
 		if _, err := p.Run(); err != nil {
 			fmt.Printf("Alas, there's been an error: %v", err)
 			os.Exit(1)
