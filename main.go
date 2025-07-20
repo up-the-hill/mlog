@@ -18,6 +18,7 @@ func main() {
 	musingPath := config.MusingsFile
 
 	listPtr := flag.Bool("l", false, "list all musings")
+	exportPtr := flag.Bool("x", false, "export all musings to markdown")
 	flag.Parse()
 	if *listPtr {
 		// in list mode
@@ -25,6 +26,8 @@ func main() {
 			dateStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
 			fmt.Printf("%s %s\n", dateStyle.Render(m.Date.Format("2006-01-02")), m.Musing)
 		}
+	} else if *exportPtr {
+		exportMusings(musingPath)
 	} else {
 		// run without any flags
 		p := tea.NewProgram(initialModel(musingPath))

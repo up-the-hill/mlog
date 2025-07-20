@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -9,13 +10,13 @@ import (
 
 func appendEntry(filename string, newEntry any) {
 	if err := os.MkdirAll(filepath.Dir(filename), 0755); err != nil {
-		panic(err);
+		panic(err)
 	}
-	f, _ := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644);
-	defer f.Close();
+	f, _ := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	defer f.Close()
 
-	entryJson, _ := json.Marshal(newEntry);
-	f.Write(append(entryJson, "\n"...));
+	entryJson, _ := json.Marshal(newEntry)
+	f.Write(append(entryJson, "\n"...))
 }
 
 func getEntries(filename string) []musing {
@@ -38,4 +39,22 @@ func getEntries(filename string) []musing {
 	}
 
 	return entries
+}
+
+func exportMusings(musingPath string) {
+	musings := getEntries(musingPath)
+	exportPath := filepath.Join(filepath.Dir(musingPath), "musings.md")
+	f, err := os.Create(exportPath)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	f.WriteString("# Musings\n\n")
+
+	for _, m := range musings {
+		line := fmt.Sprintf("- %s: %s\n", m.Date.Format("2006-01-02"), m.Musing)
+		f.WriteString(line)
+	}
+	fmt.Printf("Musings exported to %s\n", exportPath)
 }
