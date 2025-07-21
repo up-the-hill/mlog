@@ -1,40 +1,41 @@
-package main
+package ui
 
 import (
 	"fmt"
 	"time"
+	"up-the-hill/mlog/utils"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type musing struct {
+type Musing struct {
 	Musing string    `json:"musing"`
 	Date   time.Time `json:"date"`
 }
 
-type model struct {
+type Model struct {
 	textinput   textinput.Model
 	exiting     bool
 	musingsPath string
 }
 
-func initialModel(musingsPath string, charLimit int) model {
+func InitialModel(musingsPath string, charLimit int) Model {
 	ti := textinput.New()
 	ti.Focus()
 	ti.CharLimit = charLimit
 	ti.Width = 20
-	return model{
+	return Model{
 		textinput:   ti,
 		musingsPath: musingsPath,
 	}
 }
 
-func (m model) Init() tea.Cmd {
+func (m Model) Init() tea.Cmd {
 	return tea.SetWindowTitle("mlog")
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if m.exiting {
 		return m, tea.Quit
 	}
@@ -46,7 +47,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "enter":
-			appendEntry(m.musingsPath, m.textinput.Value())
+			utils.AppendEntry(m.musingsPath, m.textinput.Value())
 			m.exiting = true
 			return m, nil
 		}
@@ -56,7 +57,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m model) View() string {
+func (m Model) View() string {
 	res := ""
 
 	if m.exiting {

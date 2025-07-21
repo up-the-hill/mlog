@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"errors"
@@ -22,7 +22,7 @@ var defaultConfig Config = Config{
 	128,
 }
 
-func loadConfig() Config {
+func LoadConfig() Config {
 	var config Config
 	configDir, _ := os.UserConfigDir()
 
@@ -36,7 +36,7 @@ func loadConfig() Config {
 	return config
 }
 
-func createConfig() error {
+func CreateConfig() error {
 	var config Config
 	configDir, _ := os.UserConfigDir()
 	configPath := filepath.Join(configDir, "mlog", "config.toml")

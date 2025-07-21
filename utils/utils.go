@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"encoding/json"
@@ -7,10 +7,23 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/charmbracelet/bubbles/textinput"
 )
 
-func appendEntry(filename string, m string) {
-	newEntry := &musing{
+type Musing struct {
+	Musing string    `json:"musing"`
+	Date   time.Time `json:"date"`
+}
+
+type Model struct {
+	textinput   textinput.Model
+	exiting     bool
+	musingsPath string
+}
+
+func AppendEntry(filename string, m string) {
+	newEntry := &Musing{
 		Musing: m,
 		Date:   time.Now(),
 	}
@@ -25,10 +38,10 @@ func appendEntry(filename string, m string) {
 	f.Write(append(entryJson, "\n"...))
 }
 
-func getEntries(filename string) []musing {
+func GetEntries(filename string) []Musing {
 	dat, _ := os.ReadFile(filename)
 	lines := strings.Split(string(dat), "\n")
-	var entries []musing
+	var entries []Musing
 
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
@@ -36,7 +49,7 @@ func getEntries(filename string) []musing {
 			continue // skip empty lines
 		}
 
-		var m musing
+		var m Musing
 		if err := json.Unmarshal([]byte(line), &m); err != nil {
 			// Skip malformed lines
 			continue
@@ -47,12 +60,12 @@ func getEntries(filename string) []musing {
 	return entries
 }
 
-func exportMusings(musingPath, exportPath string) {
-	musings := getEntries(musingPath)
+func ExportMusings(musingPath, exportPath string) {
+	musings := GetEntries(musingPath)
 	if err := os.MkdirAll(filepath.Dir(exportPath), 0755); err != nil {
 		panic(err)
 	}
-	
+
 	f, err := os.Create(exportPath)
 	if err != nil {
 		panic(err)
