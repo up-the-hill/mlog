@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 
@@ -9,39 +10,50 @@ import (
 
 type Config struct {
 	MusingsFile string `toml:"musings_file"`
-	CharLimit   int    `toml:"char_limit"`
 	ExportPath  string `toml:"export_path"`
+	CharLimit   int    `toml:"char_limit"`
 }
 
-func loadConfig() (Config, error) {
+var homeDir, _ = os.UserHomeDir()
+
+var defaultConfig Config = Config{
+	filepath.Join(homeDir, "mlog", "musings.ndjson"),
+	filepath.Join(homeDir, "mlog", "musings.md"),
+	128,
+}
+
+func loadConfig() Config {
 	var config Config
-	configDir, err := os.UserConfigDir()
-	if err != nil {
-		return config, err
+	configDir, _ := os.UserConfigDir()
+
+	configPath := filepath.Join(configDir, "mlog", "config.toml")
+
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		return defaultConfig
 	}
 
+	toml.DecodeFile(configPath, &config)
+	return config
+}
+
+func createConfig() error {
+	var config Config
+	configDir, _ := os.UserConfigDir()
 	configPath := filepath.Join(configDir, "mlog", "config.toml")
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		// Create a default config if it doesn't exist
 		homeDir, _ := os.UserHomeDir()
 		config.MusingsFile = filepath.Join(homeDir, "mlog", "musings.ndjson")
-		config.CharLimit = 128
 		config.ExportPath = filepath.Join(homeDir, "mlog", "musings.md")
-		if err := os.MkdirAll(filepath.Dir(configPath), 0755); err != nil {
-			return config, err
-		}
+		config.CharLimit = 128
+		os.MkdirAll(filepath.Dir(configPath), 0755)
 
-		f, err := os.Create(configPath)
-		if err != nil {
-			return config, err
-		}
+		f, _ := os.Create(configPath)
 		defer f.Close()
-		return config, toml.NewEncoder(f).Encode(config)
+		toml.NewEncoder(f).Encode(config)
+	} else {
+		return errors.New("Config file already exists")
 	}
-
-	if _, err := toml.DecodeFile(configPath, &config); err != nil {
-		return config, err
-	}
-	return config, nil
+	return nil
 }

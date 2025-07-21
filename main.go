@@ -10,16 +10,13 @@ import (
 )
 
 func main() {
-	config, err := loadConfig()
-	if err != nil {
-		fmt.Printf("Error loading config: %v\n", err)
-		os.Exit(1)
-	}
+	config := loadConfig()
 	musingPath := config.MusingsFile
 
 	addPtr := flag.String("a", "", "add a new musing")
 	listPtr := flag.Bool("l", false, "list all musings")
 	exportPtr := flag.Bool("x", false, "export all musings to markdown")
+	configCreatePtr := flag.Bool("config-create", false, "create a default config file")
 	flag.Parse()
 	if *listPtr {
 		// in list mode
@@ -32,6 +29,9 @@ func main() {
 	} else if *addPtr != "" {
 		appendEntry(musingPath, *addPtr)
 		fmt.Printf("Logged \"%s\"\n", *addPtr)
+	} else if *configCreatePtr {
+		createConfig()
+		fmt.Printf("Created config file!\n")
 	} else {
 		// run without any flags
 		p := tea.NewProgram(initialModel(musingPath, config.CharLimit))
