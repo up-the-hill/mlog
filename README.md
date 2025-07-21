@@ -1,4 +1,20 @@
 # mlog
 
-A simple cli tool to log media and ideas. Built with the idea of having a
-locally available, single tool to log movies, books, tweet-style posts, etc.
+A simple cli tool to log atomic thoughts.
+
+## Features
+
+- A 128 character limit.
+- Timestamped logs.
+- Markdown export.
+
+## Configuration file
+
+Config file stored in OS-default config directory.
+
+```config.toml
+musings_file = "$HOME/mlog/musings.ndjson"
+export_path = "$HOME/mlog/musings.ndjson"
+char_limit = 128
+
+```
