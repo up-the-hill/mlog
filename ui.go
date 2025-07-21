@@ -2,10 +2,22 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
+
+type musing struct {
+	Musing string    `json:"musing"`
+	Date   time.Time `json:"date"`
+}
+
+type model struct {
+	textinput   textinput.Model
+	exiting     bool
+	musingsPath string
+}
 
 func initialModel(musingsPath string, charLimit int) model {
 	ti := textinput.New()
